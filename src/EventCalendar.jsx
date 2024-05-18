@@ -25,23 +25,37 @@ import {
   ButtonGroup,
   Button,
   Flex,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  FormControl,
+  FormLabel,
+  Input,
 } from "@chakra-ui/react";
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
-const events = [
-  { date: subDays(new Date(), 6), title: "Post video" },
-  { date: subDays(new Date(), 1), title: "Edit video" },
-  { date: addDays(new Date(), 3), title: "Code" },
-];
-
 const EventCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  const [events, setEvents] = useState([
+    { date: subDays(new Date(), 6), title: "Post video" },
+    { date: subDays(new Date(), 1), title: "Edit video" },
+    { date: addDays(new Date(), 3), title: "Code" },
+  ]);
 
   const [selectedDate, setSelectedDate] = useState(null);
 
   const firstDayOfMonth = startOfMonth(currentDate);
   const lastDayOfMonth = endOfMonth(currentDate);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [newEventTitle, setNewEventTitle] = useState("");
 
   // Create functions to go to the next and previous month
   const goToNextMonth = () => {
@@ -50,6 +64,17 @@ const EventCalendar = () => {
 
   const goToPrevMonth = () => {
     setCurrentDate(subMonths(currentDate, 1));
+  };
+
+  const handleBoxClick = () => {
+    setNewEventTitle("");
+    onOpen();
+  };
+
+  const handleSave = () => {
+    const newEvent = { date: selectedDate, title: newEventTitle };
+    setEvents([...events, newEvent]);
+    onClose();
   };
 
   const daysInMonth = eachDayOfInterval({
@@ -90,7 +115,27 @@ const EventCalendar = () => {
           </ButtonGroup>
         </Flex>
       </Container>
-
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Create Event</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Event Title</FormLabel>
+              <Input
+                value={newEventTitle}
+                onChange={(e) => setNewEventTitle(e.target.value)}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleSave}>
+              Save
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Grid mt={6} templateColumns="repeat(7, 1fr)" gap={6}>
         {WEEKDAYS.map((day) => {
           return <Text key={day}>{day}</Text>;
@@ -122,7 +167,10 @@ const EventCalendar = () => {
               textAlign="center"
               bg={isToday(day) ? "gray.200" : undefined}
               color={isToday(day) ? "gray.900" : undefined}
-              onClick={() => setSelectedDate(day)}
+              onClick={() => {
+                setSelectedDate(day);
+                handleBoxClick();
+              }}
               cursor={"pointer"}
               _hover={{ bg: "blue.300" }}
               minH="110px"
