@@ -2,8 +2,6 @@ import { useState } from "react";
 
 import PropTypes from "prop-types";
 
-import { addDays, subDays } from "date-fns";
-
 import {
   eachDayOfInterval,
   endOfMonth,
@@ -11,11 +9,21 @@ import {
   getDay,
   isToday,
   startOfMonth,
+  addDays,
+  subDays,
 } from "date-fns";
 
 import { useMemo } from "react";
 
-import { Container, Text, Grid, Box } from "@chakra-ui/react";
+import {
+  Container,
+  Text,
+  Grid,
+  Box,
+  ButtonGroup,
+  Button,
+  Flex,
+} from "@chakra-ui/react";
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
@@ -60,14 +68,20 @@ const EventCalendar = () => {
   }, [events]);
 
   return (
-    <Container maxW="100%">
-      <div className="mb-4">
-        <Text fontSize={"xl"} textAlign={"center"}>
+    <Container maxW="100%" mt={6}>
+      <Container>
+        <Text fontSize={"3xl"} textAlign={"center"}>
           {format(currentDate, "MMMM yyyy")}
         </Text>
-      </div>
+        <Flex justifyContent="center" mt={4}>
+          <ButtonGroup mt={4} spacing={4}>
+            <Button onClick={() => console.log("Previous month")}>Prev</Button>
+            <Button onClick={() => console.log("Next month")}>Next</Button>
+          </ButtonGroup>
+        </Flex>
+      </Container>
 
-      <Grid templateColumns="repeat(7, 1fr)" gap={6}>
+      <Grid mt={6} templateColumns="repeat(7, 1fr)" gap={6}>
         {WEEKDAYS.map((day) => {
           return <Text key={day}>{day}</Text>;
         })}
