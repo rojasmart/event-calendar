@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import PropTypes from "prop-types";
 
 import { addDays, subDays } from "date-fns";
@@ -19,17 +21,19 @@ const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
 const events = [
   { date: subDays(new Date(), 6), title: "Post video" },
-
   { date: subDays(new Date(), 1), title: "Edit video" },
-
   { date: addDays(new Date(), 3), title: "Code" },
 ];
 
 const EventCalendar = () => {
   const currentDate = new Date();
 
+  const [selectedDate, setSelectedDate] = useState(null);
+
   const firstDayOfMonth = startOfMonth(currentDate);
+
   const lastDayOfMonth = endOfMonth(currentDate);
+
   const daysInMonth = eachDayOfInterval({
     start: firstDayOfMonth,
     end: lastDayOfMonth,
@@ -56,7 +60,7 @@ const EventCalendar = () => {
   }, [events]);
 
   return (
-    <Container maxW="100%" backgroundColor={"blue"}>
+    <Container maxW="100%">
       <div className="mb-4">
         <Text fontSize={"xl"} textAlign={"center"}>
           {format(currentDate, "MMMM yyyy")}
@@ -94,6 +98,10 @@ const EventCalendar = () => {
               textAlign="center"
               bg={isToday(day) ? "gray.200" : undefined}
               color={isToday(day) ? "gray.900" : undefined}
+              onClick={() => setSelectedDate(day)}
+              cursor={"pointer"}
+              _hover={{ bg: "blue.300" }}
+              minH="110px"
             >
               {format(day, "d")}
 
