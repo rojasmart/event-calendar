@@ -11,6 +11,8 @@ import {
   startOfMonth,
   addDays,
   subDays,
+  addMonths,
+  subMonths,
 } from "date-fns";
 
 import { useMemo } from "react";
@@ -34,13 +36,21 @@ const events = [
 ];
 
 const EventCalendar = () => {
-  const currentDate = new Date();
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const [selectedDate, setSelectedDate] = useState(null);
 
   const firstDayOfMonth = startOfMonth(currentDate);
-
   const lastDayOfMonth = endOfMonth(currentDate);
+
+  // Create functions to go to the next and previous month
+  const goToNextMonth = () => {
+    setCurrentDate(addMonths(currentDate, 1));
+  };
+
+  const goToPrevMonth = () => {
+    setCurrentDate(subMonths(currentDate, 1));
+  };
 
   const daysInMonth = eachDayOfInterval({
     start: firstDayOfMonth,
@@ -75,8 +85,8 @@ const EventCalendar = () => {
         </Text>
         <Flex justifyContent="center" mt={4}>
           <ButtonGroup mt={4} spacing={4}>
-            <Button onClick={() => console.log("Previous month")}>Prev</Button>
-            <Button onClick={() => console.log("Next month")}>Next</Button>
+            <Button onClick={goToPrevMonth}>Prev</Button>
+            <Button onClick={goToNextMonth}>Next</Button>
           </ButtonGroup>
         </Flex>
       </Container>
