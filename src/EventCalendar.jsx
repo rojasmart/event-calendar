@@ -58,6 +58,9 @@ const EventCalendar = () => {
 
   const [selectedDate, setSelectedDate] = useState(null);
 
+  // Add a new state variable for the selected category
+  const [selectedCategory, setSelectedCategory] = useState("");
+
   const firstDayOfMonth = startOfMonth(currentDate);
   const lastDayOfMonth = endOfMonth(currentDate);
 
@@ -125,6 +128,19 @@ const EventCalendar = () => {
             <Button onClick={goToPrevMonth}>Prev</Button>
             <Button onClick={goToNextMonth}>Next</Button>
           </ButtonGroup>
+        </Flex>
+        <Flex justifyContent="center" mt={4}>
+          <Select
+            placeholder="Filter by category"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            {EVENT_CATEGORIES.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </Select>
         </Flex>
       </Container>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -203,18 +219,23 @@ const EventCalendar = () => {
             >
               {format(day, "d")}
 
-              {todaysEvents.map((event) => {
-                return (
-                  <Box
-                    key={event.title}
-                    bg={CATEGORY_COLORS[event.category] || "gray.300"}
-                    borderRadius="md"
-                    color="gray.900"
-                  >
-                    {event.title} ({event.category})
-                  </Box>
-                );
-              })}
+              {todaysEvents
+                .filter(
+                  (event) =>
+                    !selectedCategory || event.category === selectedCategory
+                )
+                .map((event) => {
+                  return (
+                    <Box
+                      key={event.title}
+                      bg={CATEGORY_COLORS[event.category] || "gray.300"}
+                      borderRadius="md"
+                      color="gray.900"
+                    >
+                      {event.title} ({event.category})
+                    </Box>
+                  );
+                })}
             </Box>
           );
         })}
