@@ -36,13 +36,16 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Select,
 } from "@chakra-ui/react";
+import { ca } from "date-fns/locale";
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+const EVENT_CATEGORIES = ["Category 1", "Category 2", "Category 3"];
 
 const EventCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-
+  const [newEventCategory, setNewEventCategory] = useState("");
   const [events, setEvents] = useState([
     { date: subDays(new Date(), 6), title: "Post video" },
     { date: subDays(new Date(), 1), title: "Edit video" },
@@ -68,11 +71,16 @@ const EventCalendar = () => {
 
   const handleBoxClick = () => {
     setNewEventTitle("");
+    setNewEventCategory("");
     onOpen();
   };
 
   const handleSave = () => {
-    const newEvent = { date: selectedDate, title: newEventTitle };
+    const newEvent = {
+      date: selectedDate,
+      title: newEventTitle,
+      category: newEventCategory,
+    };
     setEvents([...events, newEvent]);
     onClose();
   };
@@ -127,6 +135,20 @@ const EventCalendar = () => {
                 value={newEventTitle}
                 onChange={(e) => setNewEventTitle(e.target.value)}
               />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Event Category</FormLabel>
+              <Select
+                placeholder="Select category"
+                value={newEventCategory}
+                onChange={(e) => setNewEventCategory(e.target.value)}
+              >
+                {EVENT_CATEGORIES.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </Select>
             </FormControl>
           </ModalBody>
           <ModalFooter>
@@ -185,7 +207,7 @@ const EventCalendar = () => {
                     borderRadius="md"
                     color="gray.900"
                   >
-                    {event.title}
+                    {event.title} ({event.category})
                   </Box>
                 );
               })}
