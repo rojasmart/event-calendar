@@ -42,9 +42,9 @@ import {
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const EVENT_CATEGORIES = ["Ticket", "Sala", "Estacionamento"];
 const CATEGORY_COLORS = {
-  Ticket: "green.500",
-  Sala: "blue.500",
-  Estacionamento: "red.500",
+  Ticket: "green.300",
+  Sala: "blue.300",
+  Estacionamento: "yellow.300",
 };
 
 const EventCalendar = () => {
@@ -92,6 +92,15 @@ const EventCalendar = () => {
     onClose();
   };
 
+  const handleDelete = (eventToDelete) => {
+    setEvents(events.filter((event) => event !== eventToDelete));
+  };
+
+  const handleEdit = (eventToEdit) => {
+    setNewEventTitle(eventToEdit.title);
+    onOpen();
+  };
+
   const daysInMonth = eachDayOfInterval({
     start: firstDayOfMonth,
     end: lastDayOfMonth,
@@ -119,19 +128,24 @@ const EventCalendar = () => {
 
   return (
     <Container maxW="100%" mt={6}>
-      <Container>
-        <Text fontSize={"3xl"} textAlign={"center"}>
-          {format(currentDate, "MMMM yyyy")}
-        </Text>
-        <Flex justifyContent="center" mt={4}>
+      <Container maxW={"100%"} p={0}>
+        <Flex
+          justifyContent="space-between"
+          mt={4}
+          alignItems={"self-end"}
+          gap={4}
+        >
           <ButtonGroup mt={4} spacing={4}>
             <Button onClick={goToPrevMonth}>Prev</Button>
+            <Text fontSize={"2xl"} textAlign={"center"}>
+              {format(currentDate, "MMMM yyyy")}
+            </Text>
             <Button onClick={goToNextMonth}>Next</Button>
           </ButtonGroup>
-        </Flex>
-        <Flex justifyContent="center" mt={4}>
           <Select
-            placeholder="Filter by category"
+            cursor={"pointer"}
+            maxW={"200px"}
+            placeholder="Todos"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
           >
@@ -146,18 +160,18 @@ const EventCalendar = () => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create Event</ModalHeader>
+          <ModalHeader>Criar Evento</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <FormControl>
-              <FormLabel>Event Title</FormLabel>
+              <FormLabel>Título Evento</FormLabel>
               <Input
                 value={newEventTitle}
                 onChange={(e) => setNewEventTitle(e.target.value)}
               />
             </FormControl>
             <FormControl mt={4}>
-              <FormLabel>Event Category</FormLabel>
+              <FormLabel>Categoria Evento</FormLabel>
               <Select
                 placeholder="Select category"
                 value={newEventCategory}
@@ -172,13 +186,13 @@ const EventCalendar = () => {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleSave}>
-              Save
+            <Button colorScheme="green" onClick={handleSave}>
+              Criar
             </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Grid mt={6} templateColumns="repeat(7, 1fr)" gap={6}>
+      <Grid mt={6} templateColumns="repeat(7, 1fr)" gap={1}>
         {WEEKDAYS.map((day) => {
           return <Text key={day}>{day}</Text>;
         })}
@@ -207,14 +221,14 @@ const EventCalendar = () => {
               borderRadius="md"
               p={2}
               textAlign="center"
-              bg={isToday(day) ? "gray.200" : undefined}
+              bg={isToday(day) ? "red.200" : undefined}
               color={isToday(day) ? "gray.900" : undefined}
               onClick={() => {
                 setSelectedDate(day);
                 handleBoxClick();
               }}
               cursor={"pointer"}
-              _hover={{ bg: "blue.300" }}
+              _hover={{ bg: "gray.100" }}
               minH="110px"
             >
               {format(day, "d")}
@@ -231,8 +245,34 @@ const EventCalendar = () => {
                       bg={CATEGORY_COLORS[event.category] || "gray.300"}
                       borderRadius="md"
                       color="gray.900"
+                      display={"flex"}
+                      justifyContent={"space-between"}
+                      p={2}
+                      mt={2}
                     >
-                      {event.title} ({event.category})
+                      <Text fontSize={"sm"}>{event.title}</Text>
+                      <Box display={"flex"} gap={1}>
+                        <Button
+                          size="xs"
+                          colorScheme="blue"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent the box click event from firing
+                            handleEdit(event);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="xs"
+                          colorScheme="red"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent the box click event from firing
+                            handleDelete(event);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </Box>
                     </Box>
                   );
                 })}
