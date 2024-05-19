@@ -38,10 +38,14 @@ import {
   Input,
   Select,
 } from "@chakra-ui/react";
-import { ca } from "date-fns/locale";
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-const EVENT_CATEGORIES = ["Category 1", "Category 2", "Category 3"];
+const EVENT_CATEGORIES = ["Ticket", "Sala", "Estacionamento"];
+const CATEGORY_COLORS = {
+  Ticket: "green.500",
+  Sala: "blue.500",
+  Estacionamento: "red.500",
+};
 
 const EventCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -203,7 +207,7 @@ const EventCalendar = () => {
                 return (
                   <Box
                     key={event.title}
-                    bg="green.500"
+                    bg={CATEGORY_COLORS[event.category] || "gray.300"}
                     borderRadius="md"
                     color="gray.900"
                   >
