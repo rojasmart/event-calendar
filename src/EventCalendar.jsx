@@ -194,7 +194,7 @@ const EventCalendar = () => {
             <FormControl mt={4}>
               <FormLabel>Categoria Evento</FormLabel>
               <Select
-                placeholder="Select category"
+                placeholder="Seleccione Categoria"
                 value={newEventCategory}
                 onChange={(e) => setNewEventCategory(e.target.value)}
               >
@@ -229,7 +229,7 @@ const EventCalendar = () => {
             <FormControl mt={4}>
               <FormLabel>Categoria Evento</FormLabel>
               <Select
-                placeholder="Select category"
+                placeholder="Seleccione Categoria"
                 value={newEventCategory}
                 onChange={(e) => setNewEventCategory(e.target.value)}
               >
@@ -261,6 +261,7 @@ const EventCalendar = () => {
               borderRadius="md"
               p={2}
               textAlign="center"
+              backgroundColor={"gray.100"}
             />
           );
         })}
@@ -346,7 +347,6 @@ EventCalendar.propTypes = {
   events: PropTypes.arrayOf(
     PropTypes.shape({
       date: PropTypes.instanceOf(Date),
-
       title: PropTypes.string,
     })
   ),
