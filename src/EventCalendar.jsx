@@ -65,6 +65,12 @@ const EventCalendar = () => {
   const lastDayOfMonth = endOfMonth(currentDate);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenEdit,
+    onOpen: onOpenEdit,
+    onClose: onCloseEdit,
+  } = useDisclosure();
+
   const [newEventTitle, setNewEventTitle] = useState("");
 
   // Create functions to go to the next and previous month
@@ -98,7 +104,7 @@ const EventCalendar = () => {
 
   const handleEdit = (eventToEdit) => {
     setNewEventTitle(eventToEdit.title);
-    onOpen();
+    onOpenEdit();
   };
 
   const daysInMonth = eachDayOfInterval({
@@ -188,6 +194,41 @@ const EventCalendar = () => {
           <ModalFooter>
             <Button colorScheme="green" onClick={handleSave}>
               Criar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isOpenEdit} onClose={onCloseEdit}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Editar Evento</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Título Evento</FormLabel>
+              <Input
+                value={newEventTitle}
+                onChange={(e) => setNewEventTitle(e.target.value)}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Categoria Evento</FormLabel>
+              <Select
+                placeholder="Select category"
+                value={newEventCategory}
+                onChange={(e) => setNewEventCategory(e.target.value)}
+              >
+                {EVENT_CATEGORIES.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handleSave}>
+              Editar
             </Button>
           </ModalFooter>
         </ModalContent>
