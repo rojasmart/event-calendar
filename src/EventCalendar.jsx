@@ -64,6 +64,8 @@ const EventCalendar = () => {
   const firstDayOfMonth = startOfMonth(currentDate);
   const lastDayOfMonth = endOfMonth(currentDate);
 
+  const [eventToEdit, setEventToEdit] = useState(null);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isOpenEdit,
@@ -102,9 +104,22 @@ const EventCalendar = () => {
     setEvents(events.filter((event) => event !== eventToDelete));
   };
 
-  const handleEdit = (eventToEdit) => {
-    setNewEventTitle(eventToEdit.title);
+  const handleEdit = (event) => {
+    setEventToEdit(event);
+    setNewEventTitle(event.title);
+    setNewEventCategory(event.category);
     onOpenEdit();
+  };
+
+  const handleUpdate = () => {
+    setEvents(
+      events.map((event) =>
+        event === eventToEdit
+          ? { ...event, title: newEventTitle, category: newEventCategory }
+          : event
+      )
+    );
+    onCloseEdit();
   };
 
   const daysInMonth = eachDayOfInterval({
@@ -227,7 +242,7 @@ const EventCalendar = () => {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" onClick={handleSave}>
+            <Button colorScheme="blue" onClick={handleUpdate}>
               Editar
             </Button>
           </ModalFooter>
