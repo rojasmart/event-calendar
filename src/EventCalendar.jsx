@@ -37,7 +37,11 @@ import {
   FormLabel,
   Input,
   Select,
+  IconButton,
+  HStack,
 } from "@chakra-ui/react";
+
+import { CloseIcon } from "@chakra-ui/icons";
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const EVENT_CATEGORIES = ["Ticket", "Sala", "Estacionamento"];
@@ -163,19 +167,21 @@ const EventCalendar = () => {
             </Text>
             <Button onClick={goToNextMonth}>Next</Button>
           </ButtonGroup>
-          <Select
-            cursor={"pointer"}
-            maxW={"200px"}
-            placeholder="Todos"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
+          <HStack spacing={2}>
             {EVENT_CATEGORIES.map((category) => (
-              <option key={category} value={category}>
+              <Button
+                key={category}
+                backgroundColor={CATEGORY_COLORS[category]}
+                // Assuming you want white text
+
+                variant="solid"
+                onClick={() => setSelectedCategory(category)}
+                isActive={selectedCategory === category}
+              >
                 {category}
-              </option>
+              </Button>
             ))}
-          </Select>
+          </HStack>
         </Flex>
       </Container>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -194,6 +200,7 @@ const EventCalendar = () => {
             <FormControl mt={4}>
               <FormLabel>Categoria Evento</FormLabel>
               <Select
+                cursor={"pointer"}
                 placeholder="Seleccione Categoria"
                 value={newEventCategory}
                 onChange={(e) => setNewEventCategory(e.target.value)}
@@ -248,16 +255,20 @@ const EventCalendar = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
       <Grid mt={6} templateColumns="repeat(7, 1fr)" gap={1}>
         {WEEKDAYS.map((day) => {
-          return <Text key={day}>{day}</Text>;
+          return (
+            <Button backgroundColor={"gray.100"} key={day}>
+              {day}
+            </Button>
+          );
         })}
 
         {Array.from({ length: startingDayIndex }).map((_, index) => {
           return (
             <Box
               key={`empty-${index}`}
-              border="1px"
               borderRadius="md"
               p={2}
               textAlign="center"
@@ -276,19 +287,32 @@ const EventCalendar = () => {
               key={index}
               border="1px"
               borderRadius="md"
+              borderColor={"gray.200"}
               p={2}
               textAlign="center"
-              bg={isToday(day) ? "red.200" : undefined}
-              color={isToday(day) ? "gray.900" : undefined}
               onClick={() => {
                 setSelectedDate(day);
+
                 handleBoxClick();
               }}
               cursor={"pointer"}
               _hover={{ bg: "gray.100" }}
-              minH="110px"
+              minH="150px"
             >
-              {format(day, "d")}
+              <Box
+                width="30px"
+                height="30px"
+                borderRadius="50%"
+                display="flex"
+                fontSize="sm"
+                fontWeight={isToday(day) ? "bold" : "normal"}
+                alignItems="center"
+                justifyContent="center"
+                borderColor={isToday(day) ? "white" : "gray.100"}
+                backgroundColor={isToday(day) ? "pink" : "gray.100"}
+              >
+                {format(day, "d")}
+              </Box>
 
               {todaysEvents
                 .filter(
@@ -306,29 +330,28 @@ const EventCalendar = () => {
                       justifyContent={"space-between"}
                       p={2}
                       mt={2}
+                      onClick={(e) => {
+                        e.stopPropagation();
+
+                        handleEdit(event);
+                      }}
                     >
-                      <Text fontSize={"sm"}>{event.title}</Text>
+                      <Text as={"b"} fontSize={"sm"}>
+                        {event.title}
+                      </Text>
+
                       <Box display={"flex"} gap={1}>
-                        <Button
-                          size="xs"
-                          colorScheme="blue"
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent the box click event from firing
-                            handleEdit(event);
-                          }}
-                        >
-                          Edit
-                        </Button>
-                        <Button
+                        <IconButton
                           size="xs"
                           colorScheme="red"
+                          aria-label="Search database"
+                          icon={<CloseIcon />}
                           onClick={(e) => {
                             e.stopPropagation(); // Prevent the box click event from firing
+
                             handleDelete(event);
                           }}
-                        >
-                          Delete
-                        </Button>
+                        />
                       </Box>
                     </Box>
                   );
