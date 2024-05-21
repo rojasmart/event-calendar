@@ -13,6 +13,8 @@ import {
   subDays,
   addMonths,
   subMonths,
+  startOfWeek,
+  endOfWeek,
 } from "date-fns";
 
 import { useMemo } from "react";
@@ -68,9 +70,15 @@ const EventCalendar = () => {
   const firstDayOfMonth = startOfMonth(currentDate);
   const lastDayOfMonth = endOfMonth(currentDate);
 
+  const startOfWeekDate = startOfWeek(currentDate, { weekStartsOn: 1 });
+  const endOfWeekDate = endOfWeek(currentDate, { weekStartsOn: 1 });
+
   const [eventToEdit, setEventToEdit] = useState(null);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [viewMode, setViewMode] = useState("month");
+
   const {
     isOpen: isOpenEdit,
     onOpen: onOpenEdit,
@@ -126,10 +134,10 @@ const EventCalendar = () => {
     onCloseEdit();
   };
 
-  const daysInMonth = eachDayOfInterval({
+  /* const daysInMonth = eachDayOfInterval({
     start: firstDayOfMonth,
     end: lastDayOfMonth,
-  });
+  }); */
 
   const startingDayIndex = getDay(firstDayOfMonth);
 
@@ -151,6 +159,31 @@ const EventCalendar = () => {
     }, {});
   }, [events]);
 
+  // Create a function to switch the view mode
+  const switchViewMode = () => {
+    setViewMode(viewMode === "month" ? "week" : "month");
+  };
+
+  // Create a function to get the days to display based on the view mode
+  const getDaysToDisplay = () => {
+    if (viewMode === "month") {
+      return eachDayOfInterval({
+        start: firstDayOfMonth,
+        end: lastDayOfMonth,
+      });
+    } else {
+      const startOfWeekDate = startOfWeek(currentDate);
+      const endOfWeekDate = endOfWeek(currentDate);
+      return eachDayOfInterval({
+        start: startOfWeekDate,
+        end: endOfWeekDate,
+      });
+    }
+  };
+
+  // Use the getDaysToDisplay function to get the days to display
+  const daysToDisplay = getDaysToDisplay();
+
   return (
     <Container maxW="100%" mt={6}>
       <Container maxW={"100%"} p={0}>
@@ -166,6 +199,9 @@ const EventCalendar = () => {
               {format(currentDate, "MMMM yyyy")}
             </Text>
             <Button onClick={goToNextMonth}>Next</Button>
+            <Button onClick={switchViewMode}>
+              Switch to {viewMode === "month" ? "week" : "month"} view
+            </Button>
           </ButtonGroup>
           <HStack spacing={2}>
             <Button
@@ -291,7 +327,7 @@ const EventCalendar = () => {
           );
         })}
 
-        {daysInMonth.map((day, index) => {
+        {daysToDisplay.map((day, index) => {
           const dateKey = format(day, "yyyy-MM-dd");
 
           const todaysEvents = eventsByDate[dateKey] || [];
