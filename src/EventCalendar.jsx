@@ -168,12 +168,18 @@ const EventCalendar = () => {
             <Button onClick={goToNextMonth}>Next</Button>
           </ButtonGroup>
           <HStack spacing={2}>
+            <Button
+              backgroundColor="gray.200"
+              variant="solid"
+              onClick={() => setSelectedCategory(null)}
+              isActive={selectedCategory === null}
+            >
+              All
+            </Button>
             {EVENT_CATEGORIES.map((category) => (
               <Button
                 key={category}
                 backgroundColor={CATEGORY_COLORS[category]}
-                // Assuming you want white text
-
                 variant="solid"
                 onClick={() => setSelectedCategory(category)}
                 isActive={selectedCategory === category}
