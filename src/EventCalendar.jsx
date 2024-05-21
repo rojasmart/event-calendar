@@ -220,7 +220,11 @@ const EventCalendar = () => {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="green" onClick={handleSave}>
+            <Button
+              colorScheme="green"
+              onClick={handleSave}
+              isDisabled={!newEventTitle || !newEventCategory}
+            >
               Criar
             </Button>
           </ModalFooter>
@@ -255,7 +259,11 @@ const EventCalendar = () => {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" onClick={handleUpdate}>
+            <Button
+              colorScheme="blue"
+              onClick={handleUpdate}
+              isDisabled={!newEventTitle || !newEventCategory}
+            >
               Editar
             </Button>
           </ModalFooter>
